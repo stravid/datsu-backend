@@ -16,4 +16,5 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-Route::resource('player', 'PlayerController', array('only' => array('create', 'index')));
+Route::resource('players', 'PlayerController', array('only' => array('store', 'index')));
+Route::resource('matches', 'MatchController', array('only' => array('store', 'show', 'update')));
