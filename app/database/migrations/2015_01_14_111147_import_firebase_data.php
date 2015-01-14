@@ -55,14 +55,14 @@ class ImportFirebaseData extends Migration {
       $turn_order = $match['turnOrder'];
       foreach ($players as $legacy_id => $id)
       {
-        $turn_order = str_replace('"' . $legacy_id . '"', $id, $turn_order);
+        $turn_order = str_replace('"' . $legacy_id . '"', '"' . $id . '"', $turn_order);
       }
 
       // Replace the legacy ids in the throws with the new ids.
       $throws = $match['throws'];
       foreach ($players as $legacy_id => $id)
       {
-        $throws = str_replace('"' . $legacy_id . '"', $id, $throws);
+        $throws = str_replace('"' . $legacy_id . '"', '"' . $id . '"', $throws);
       }
 
       $new_match = MigrationMatch::create(array('turn_order' => $turn_order, 'winner_id' => $winner_id, 'throws' => $throws));
