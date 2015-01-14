@@ -27,7 +27,7 @@ class ImportFirebaseData extends Migration {
    */
   public function up()
   {
-    $data = File::get('app/database/datsu-production-export.json');
+    $data = File::get(app_path() . '/database/datsu-production-export.json');
     $data = json_decode($data, true);
     $players = array();
 
