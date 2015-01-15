@@ -16,4 +16,18 @@ class Match extends Eloquent {
       return $player->id;
     });
   }
+
+  public function getThrowsAttribute()
+  {
+    $throws = json_decode($this->attributes['throws'], true);
+    $enhanced_throws = array();
+
+    foreach ($throws as $throw) {
+      $throw['playerName'] = Player::find($throw['playerId'])->name;
+
+      $enhanced_throws[] = $throw;
+    }
+
+    return json_encode($enhanced_throws);
+  }
 }
