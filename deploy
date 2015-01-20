@@ -10,7 +10,27 @@ test ! -z "$FTP_PASSWORD" || { echo "FTP_PASSWORD environment variable is requir
 
 echo "Deployment started";
 
-lftp -c "open -u $FTP_USER,$FTP_PASSWORD wp232.webpack.hosteurope.de; set ssl:verify-certificate no; mirror -R ./ /www/stravid/public/datsu-backend -P=10 --delete -v -X .git/* -X *.md -x .DS_Store  -x .gitignore -x .gitkeep -x deploy -x .travis.yml -x .gitattributes -x .scrutinizer.yml -x .editorconfig -x .unknownextension -x .empty -x phpunit.xml -x .env.local.php -x .env.local.php.template -x .environment -x .environment.template -x server.php"
-lftp -c "open -u $FTP_USER,$FTP_PASSWORD wp232.webpack.hosteurope.de; set ssl:verify-certificate no; chmod -R 0777 /www/stravid/public/datsu-backend/app/storage"
+lftp << EOF
+
+set ssl:verify-certificate no;
+
+open -u $FTP_USER,$FTP_PASSWORD wp232.webpack.hosteurope.de
+
+put -O /www/stravid/public/datsu-backend/ .env.php
+put -O /www/stravid/public/datsu-backend/ artisan
+mirror -v -R --delete -x .DS_Store -x .gitkeep public/ /www/stravid/public/datsu-backend/public/
+mirror -v -R --delete -X .* -X .*/ -x storage/ app/ /www/stravid/public/datsu-backend/app/
+mirror -v -R --delete -X .* -X .*/ bootstrap/ /www/stravid/public/datsu-backend/bootstrap/
+mirror -v -R --delete -X .* -X .*/ vendor/ /www/stravid/public/datsu-backend/vendor/
+
+mkdir -pf /www/stravid/public/datsu-backend/app/storage/cache/
+mkdir -pf /www/stravid/public/datsu-backend/app/storage/logs/
+mkdir -pf /www/stravid/public/datsu-backend/app/storage/meta/
+mkdir -pf /www/stravid/public/datsu-backend/app/storage/sessions/
+mkdir -pf /www/stravid/public/datsu-backend/app/storage/views/
+
+chmod -Rf 0777 /www/stravid/public/datsu-backend/app/storage
+
+EOF
 
 echo "Deployment finished";
