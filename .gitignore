@@ -1,3 +1,3 @@
-.env.local.php
+.env.development.php
 .env.php
 .environment
