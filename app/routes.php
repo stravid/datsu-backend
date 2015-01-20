@@ -14,14 +14,21 @@
 Route::resource('players', 'PlayerController', array('only' => array('store', 'index')));
 Route::resource('matches', 'MatchController', array('only' => array('store', 'show', 'update')));
 
-Route::get('/migrate/{key?}',  array(function($key = null)
+Route::post('/migrate/{token?}',  array(function($token = null)
 {
-  Artisan::call('migrate', array('--force' => true));
+  if ($token == $_ENV['MIGRATION_TOKEN']) {
+    Artisan::call('migrate', array('--force' => true));
+  }
+  else
+  {
+     App::abort(403);
+  }
 }));
 
 App::before(function($request)
 {
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS')
+    {
       $statusCode = 204;
 
       $headers = [
