@@ -4,3 +4,4 @@ MIGRATION_TOKEN="token";
 
 export FTP_USER;
 export FTP_PASSWORD;
+export MIGRATION_TOKEN;
