@@ -12,8 +12,9 @@ class MatchController extends \BaseController {
   {
     $match = Match::find($id);
     $players = $match->players()->get();
+    $throws = $match->throws()->get();
 
-    return Response::json(array('match' => $match, 'players' => $players));
+    return Response::json(array('match' => $match, 'players' => $players, 'throws' => $throws));
   }
 
 
