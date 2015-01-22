@@ -34,6 +34,6 @@ chmod -Rf 0777 /www/stravid/public/datsu-backend/app/storage
 
 EOF
 
-curl -X POST http://localhost:8000/migrate/$MIGRATION_TOKEN
+curl -X POST http://datsu-backend.stravid.com/migrate/$MIGRATION_TOKEN
 
 echo "Deployment finished";
