@@ -9,7 +9,7 @@ class PlayerController extends \BaseController {
    */
   public function index()
   {
-    return Response::json(array('env' => App::environment(), 'players' => Player::all()));
+    return Response::json(array('players' => Player::all()));
   }
 
 
