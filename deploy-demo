@@ -1,0 +1,39 @@
+#!/bin/bash
+
+command -v lftp >/dev/null 2>&1 || { echo >&2 "lftp is required but not installed, aborting. Install via Homebrew: brew install lftp"; exit 1; }
+test -f ".environment" || { echo ".environment is required but not present, aborting."; exit; }
+
+source '.environment';
+
+test ! -z "$FTP_USER" || { echo "FTP_USER environment variable is required but not present or empty, aborting."; exit; }
+test ! -z "$FTP_PASSWORD" || { echo "FTP_PASSWORD environment variable is required but not present or empty, aborting."; exit; }
+test ! -z "$MIGRATION_TOKEN" || { echo "MIGRATION_TOKEN environment variable is required but not present or empty, aborting."; exit; }
+
+echo "Deployment started";
+
+lftp << EOF
+
+set ssl:verify-certificate no;
+
+open -u $FTP_USER,$FTP_PASSWORD wp232.webpack.hosteurope.de
+
+put .env.demo.php -o /www/datsu-demo-backend/.env.php
+put -O /www/datsu-demo-backend/ artisan
+mirror -v -R --delete -x .DS_Store -x .gitkeep public/ /www/datsu-demo-backend/public/
+mirror -v -R --delete -X .* -X .*/ -x storage/ app/ /www/datsu-demo-backend/app/
+mirror -v -R --delete -X .* -X .*/ bootstrap/ /www/datsu-demo-backend/bootstrap/
+mirror -v -R --delete -X .* -X .*/ vendor/ /www/datsu-demo-backend/vendor/
+
+mkdir -pf /www/datsu-demo-backend/app/storage/cache/
+mkdir -pf /www/datsu-demo-backend/app/storage/logs/
+mkdir -pf /www/datsu-demo-backend/app/storage/meta/
+mkdir -pf /www/datsu-demo-backend/app/storage/sessions/
+mkdir -pf /www/datsu-demo-backend/app/storage/views/
+
+chmod -Rf 0777 /www/datsu-demo-backend/app/storage
+
+EOF
+
+curl -X POST http://datsu-demo-backend.stravid.com/migrate/$MIGRATION_TOKEN
+
+echo "Deployment finished";

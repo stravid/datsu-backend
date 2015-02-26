@@ -1,3 +1,4 @@
 .env.development.php
+.env.demo.php
 .env.php
 .environment
